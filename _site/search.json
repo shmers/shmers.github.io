@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "projects/pricing-risk.html",
+    "href": "projects/pricing-risk.html",
+    "title": "Designing a Predictive Risk Model for High-Value Assets",
+    "section": "",
+    "text": "This project demonstrates an end‑to‑end approach to designing, validating, and evaluating a predictive risk model in a pricing context. The focus is on modelling judgement, feature design, and validation rather than maximising headline performance metrics.\nAll data used in this project is fully synthetic and does not reflect any proprietary datasets."
+  },
+  {
+    "objectID": "projects/pricing-risk.html#overview",
+    "href": "projects/pricing-risk.html#overview",
+    "title": "Designing a Predictive Risk Model for High-Value Assets",
+    "section": "",
+    "text": "This project demonstrates an end‑to‑end approach to designing, validating, and evaluating a predictive risk model in a pricing context. The focus is on modelling judgement, feature design, and validation rather than maximising headline performance metrics.\nAll data used in this project is fully synthetic and does not reflect any proprietary datasets."
+  },
+  {
+    "objectID": "projects/pricing-risk.html#problem-statement",
+    "href": "projects/pricing-risk.html#problem-statement",
+    "title": "Designing a Predictive Risk Model for High-Value Assets",
+    "section": "Problem Statement",
+    "text": "Problem Statement\nWe consider a hypothetical insurance‑style problem where the goal is to predict the probability of a high‑cost loss event for individual policies, based on customer, asset, and contextual features.\nKey challenges include: - Class imbalance - Feature leakage - Model interpretability vs performance trade‑offs"
+  },
+  {
+    "objectID": "projects/pricing-risk.html#data-generation",
+    "href": "projects/pricing-risk.html#data-generation",
+    "title": "Designing a Predictive Risk Model for High-Value Assets",
+    "section": "Data Generation",
+    "text": "Data Generation\nWe generate a synthetic dataset designed to capture common characteristics of real‑world consumer risk portfolios: - Skewed loss distribution - Correlated features - Rare but severe outcomes"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "github.io",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  }
+]

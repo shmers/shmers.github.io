@@ -1,0 +1,32 @@
+---
+title: "Designing a Predictive Risk Model for High-Value Assets"
+---
+
+## Overview
+
+This project demonstrates an end‑to‑end approach to designing, validating, and evaluating a predictive risk model in a pricing context. The focus is on modelling judgement, feature design, and validation rather than maximising headline performance metrics.
+
+All data used in this project is fully synthetic and does not reflect any proprietary datasets.
+
+---
+
+## Problem Statement
+
+We consider a hypothetical insurance‑style problem where the goal is to predict the probability of a high‑cost loss event for individual policies, based on customer, asset, and contextual features.
+
+Key challenges include:
+- Class imbalance
+- Feature leakage
+- Model interpretability vs performance trade‑offs
+
+---
+
+## Data Generation
+
+We generate a synthetic dataset designed to capture common characteristics of real‑world consumer risk portfolios:
+- Skewed loss distribution
+- Correlated features
+- Rare but severe outcomes
+
+```{python}
+# Synthetic data generation will go here

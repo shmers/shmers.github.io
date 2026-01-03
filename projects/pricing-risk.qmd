@@ -29,4 +29,36 @@ We generate a synthetic dataset designed to capture common characteristics of re
 - Rare but severe outcomes
 
 ```{python}
-# Synthetic data generation will go here
+---
+
+## Data Generation
+
+```{python}
+import numpy as np
+import pandas as pd
+
+np.random.seed(42)
+
+n = 20000
+
+data = pd.DataFrame({
+    "vehicle_value": np.random.lognormal(mean=10, sigma=0.5, size=n),
+    "driver_age": np.random.randint(18, 80, size=n),
+    "annual_mileage": np.random.gamma(shape=2, scale=6000, size=n),
+    "urban_density": np.random.beta(2, 5, size=n),
+    "prior_claims": np.random.poisson(0.3, size=n)
+})
+
+logit = (
+    -7.0
+    + 0.000002 * data["vehicle_value"]
+    - 0.015 * data["driver_age"]
+    + 0.00004 * data["annual_mileage"]
+    + 1.5 * data["urban_density"]
+    + 0.6 * data["prior_claims"]
+)
+
+prob = 1 / (1 + np.exp(-logit))
+data["high_cost_claim"] = np.random.binomial(1, prob)
+
+data.head()

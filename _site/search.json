@@ -37,8 +37,15 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "github.io",
+    "title": "Projects",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\nDesigning a Predictive Risk Model for High-Value Assets"
+  },
+  {
+    "objectID": "projects/pricing-risk.html#data-generation-1",
+    "href": "projects/pricing-risk.html#data-generation-1",
+    "title": "Designing a Predictive Risk Model for High-Value Assets",
+    "section": "Data Generation",
+    "text": "Data Generation\nimport numpy as np import pandas as pd\nnp.random.seed(42)\nn = 20000\ndata = pd.DataFrame({ “vehicle_value”: np.random.lognormal(mean=10, sigma=0.5, size=n), “driver_age”: np.random.randint(18, 80, size=n), “annual_mileage”: np.random.gamma(shape=2, scale=6000, size=n), “urban_density”: np.random.beta(2, 5, size=n), “prior_claims”: np.random.poisson(0.3, size=n) })\nlogit = ( -7.0 + 0.000002 * data[“vehicle_value”] - 0.015 * data[“driver_age”] + 0.00004 * data[“annual_mileage”] + 1.5 * data[“urban_density”] + 0.6 * data[“prior_claims”] )\nprob = 1 / (1 + np.exp(-logit)) data[“high_cost_claim”] = np.random.binomial(1, prob)\ndata.head()"
   }
 ]

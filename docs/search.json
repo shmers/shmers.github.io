@@ -119,6 +119,13 @@
     "text": "Event Generation\n\nlogit = -4.0 + 2.0 * df[\"spatial_risk\"]\nprob = 1 / (1 + np.exp(-logit))\n\ndf[\"event\"] = np.random.binomial(1, prob)\n\ndf[\"event\"].mean()\n\nnp.float64(0.02315)"
   },
   {
+    "objectID": "projects/geospatial-risk.html#wip---visualisation",
+    "href": "projects/geospatial-risk.html#wip---visualisation",
+    "title": "Incorporating Geospatial Context into Risk Modelling",
+    "section": "WIP - Visualisation",
+    "text": "WIP - Visualisation"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About me",
@@ -166,12 +173,5 @@
     "title": "Projects",
     "section": "",
     "text": "Below is a selection of self‑contained, IP‑safe demonstration projects showcasing my approach to data science, modelling, and decision‑making in production‑style contexts.\n\nDesigning a Predictive Risk Model for High‑Value Assets\nGeospatial Enhancements to Risk Modelling"
-  },
-  {
-    "objectID": "projects/geospatial-risk.html#wip---visualisation",
-    "href": "projects/geospatial-risk.html#wip---visualisation",
-    "title": "Incorporating Geospatial Context into Risk Modelling",
-    "section": "WIP - Visualisation",
-    "text": "WIP - Visualisation"
   }
 ]

@@ -4,28 +4,63 @@
     "href": "projects/pricing-risk.html",
     "title": "Designing a Predictive Risk Model for High-Value Assets",
     "section": "",
-    "text": "This project demonstrates an end‑to‑end approach to designing, validating, and evaluating a predictive risk model in a pricing context. The focus is on modelling judgement, feature design, and validation rather than maximising headline performance metrics.\nAll data used in this project is fully synthetic and does not reflect any proprietary datasets."
+    "text": "This project demonstrates an end‑to‑end approach to designing, validating, and evaluating a predictive risk model in a pricing context. The focus is on modelling judgement, feature design, and validation rather than maximising headline performance metrics. Here I’ve intentionally generated a challenging synthetic dataset to demonstrate the modelling options available in typical insurance pricing contexts.\nDisclaimer to CMA: All data used in this project is fully synthetic (generated right before your very eyes, no less) and does not reflect any proprietary datasets."
   },
   {
     "objectID": "projects/pricing-risk.html#overview",
     "href": "projects/pricing-risk.html#overview",
     "title": "Designing a Predictive Risk Model for High-Value Assets",
     "section": "",
-    "text": "This project demonstrates an end‑to‑end approach to designing, validating, and evaluating a predictive risk model in a pricing context. The focus is on modelling judgement, feature design, and validation rather than maximising headline performance metrics.\nAll data used in this project is fully synthetic and does not reflect any proprietary datasets."
+    "text": "This project demonstrates an end‑to‑end approach to designing, validating, and evaluating a predictive risk model in a pricing context. The focus is on modelling judgement, feature design, and validation rather than maximising headline performance metrics. Here I’ve intentionally generated a challenging synthetic dataset to demonstrate the modelling options available in typical insurance pricing contexts.\nDisclaimer to CMA: All data used in this project is fully synthetic (generated right before your very eyes, no less) and does not reflect any proprietary datasets."
   },
   {
     "objectID": "projects/pricing-risk.html#problem-statement",
     "href": "projects/pricing-risk.html#problem-statement",
     "title": "Designing a Predictive Risk Model for High-Value Assets",
     "section": "Problem Statement",
-    "text": "Problem Statement\nWe consider a hypothetical insurance‑style problem where the goal is to predict the probability of a high‑cost loss event for individual policies, based on customer, asset, and contextual features.\nKey challenges include: - Class imbalance - Feature leakage - Model interpretability vs performance trade‑offs"
+    "text": "Problem Statement\nWe consider a hypothetical insurance‑style problem where the goal is to predict the probability of a high‑cost loss event for individual policies, based on customer, asset, and contextual features.\nKey challenges include:\n\nClass imbalance\nFeature leakage\nModel interpretability vs performance trade‑offs"
   },
   {
     "objectID": "projects/pricing-risk.html#data-generation",
     "href": "projects/pricing-risk.html#data-generation",
     "title": "Designing a Predictive Risk Model for High-Value Assets",
     "section": "Data Generation",
-    "text": "Data Generation\nWe generate a synthetic dataset designed to capture common characteristics of real‑world consumer risk portfolios: - Skewed loss distribution - Correlated features - Rare but severe outcomes"
+    "text": "Data Generation\nWe generate a synthetic dataset designed to capture common characteristics of real‑world consumer risk portfolios: - Skewed loss distribution - Correlated features - Rare but severe outcomes\n\nimport numpy as np\nimport pandas as pd\n\nnp.random.seed(123)\n\nn = 20000\n\ndata = pd.DataFrame({\n    \"vehicle_value\": np.random.lognormal(mean=10, sigma=0.5, size=n),\n    \"driver_age\": np.random.randint(18, 80, size=n),\n    \"annual_mileage\": np.random.gamma(shape=2, scale=6000, size=n),\n    \"urban_density\": np.random.beta(2, 5, size=n),\n    \"prior_claims\": np.random.poisson(0.3, size=n)\n})\n\nlogit = (\n    -7.0\n    + 0.000002 * data[\"vehicle_value\"]\n    - 0.015 * data[\"driver_age\"]\n    + 0.00004 * data[\"annual_mileage\"]\n    + 1.5 * data[\"urban_density\"]\n    + 0.6 * data[\"prior_claims\"]\n)\n\nprob = 1 / (1 + np.exp(-logit))\ndata[\"high_cost_claim\"] = np.random.binomial(1, prob)\n\ndata.head()\n\n\n\n\n\n\n\n\nvehicle_value\ndriver_age\nannual_mileage\nurban_density\nprior_claims\nhigh_cost_claim\n\n\n\n\n0\n12799.798382\n69\n3883.837719\n0.171791\n0\n0\n\n\n1\n36267.333927\n26\n17499.414406\n0.065992\n0\n0\n\n\n2\n25374.226904\n54\n5726.365121\n0.222687\n1\n0\n\n\n3\n10371.870313\n78\n10299.632113\n0.683120\n0\n0\n\n\n4\n16493.140959\n74\n1743.097292\n0.366287\n0\n0"
+  },
+  {
+    "objectID": "projects/pricing-risk.html#feature-engineering",
+    "href": "projects/pricing-risk.html#feature-engineering",
+    "title": "Designing a Predictive Risk Model for High-Value Assets",
+    "section": "Feature Engineering",
+    "text": "Feature Engineering\nFeature engineering focuses on incorporating domain knowledge while maintaining interpretability and stability. Transformations are chosen to reflect common approaches used in pricing and risk models, rather than maximising model complexity.\nKey considerations include: - Handling heavy‑tailed distributions - Capturing non‑linear effects - Maintaining transparency for downstream stakeholders\n\nimport numpy as np\nimport pandas as pd\n\ndf = data.copy()\n\n# Log-transform heavy-tailed monetary values\ndf[\"log_vehicle_value\"] = np.log(df[\"vehicle_value\"])\n\n# Mileage exposure bands\ndf[\"mileage_band\"] = pd.cut(\n    df[\"annual_mileage\"],\n    bins=[0, 5000, 10000, 15000, 25000, np.inf],\n    labels=False\n)\n\n# Age bands to capture non-linear risk patterns\ndf[\"age_band\"] = pd.cut(\n    df[\"driver_age\"],\n    bins=[17, 25, 35, 50, 65, 100],\n    labels=False\n)\n\n# Interaction: high value asset in dense urban areas\ndf[\"urban_value_interaction\"] = (\n    df[\"urban_density\"] * df[\"log_vehicle_value\"]\n)\n\nengineered_features = [\n    \"log_vehicle_value\",\n    \"mileage_band\",\n    \"age_band\",\n    \"urban_density\",\n    \"prior_claims\",\n    \"urban_value_interaction\"\n]\n\nX = df[engineered_features]\ny = df[\"high_cost_claim\"]\n\nX.head()\n\n\n\n\n\n\n\n\nlog_vehicle_value\nmileage_band\nage_band\nurban_density\nprior_claims\nurban_value_interaction\n\n\n\n\n0\n9.457185\n0\n4\n0.171791\n0\n1.624659\n\n\n1\n10.498673\n3\n1\n0.065992\n0\n0.692828\n\n\n2\n10.141489\n1\n3\n0.222687\n1\n2.258378\n\n\n3\n9.246853\n2\n4\n0.683120\n0\n6.316712\n\n\n4\n9.710700\n0\n4\n0.366287\n0\n3.556906"
+  },
+  {
+    "objectID": "projects/pricing-risk.html#modelling-approach",
+    "href": "projects/pricing-risk.html#modelling-approach",
+    "title": "Designing a Predictive Risk Model for High-Value Assets",
+    "section": "Modelling Approach",
+    "text": "Modelling Approach\nAs a baseline, we fit a logistic regression model using the engineered features. Logistic regression provides a transparent and well‑understood benchmark, allowing coefficient‑level interpretation and serving as a reference point for more complex models.\n\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import roc_auc_score\n\n# Train / test split\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=42, stratify=y\n)\n\n# Standardise features for logistic regression\nscaler = StandardScaler()\nX_train_scaled = scaler.fit_transform(X_train)\nX_test_scaled = scaler.transform(X_test)\n\n# Fit model\nlog_reg = LogisticRegression(max_iter=1000)\nlog_reg.fit(X_train_scaled, y_train)\n\n# Predict probabilities\ny_pred_proba = log_reg.predict_proba(X_test_scaled)[:, 1]\n\nroc_auc = roc_auc_score(y_test, y_pred_proba)\nroc_auc\n\n0.6906500333778371\n\n\nTo contextualise this value, it’s worth bearing in mind that random guessing would achieve an ROC AUC of 0.50, 0.70+ would indicate strong separation, and 1.0 a perfect model.\nOur value shows that the model could be stronger, but is still better than random. In a real insurance context we would have at least a few different options to explore here to improve the model:\n\nNon‑linear effects\nInteraction terms\nBehavioural history depth\nLatent segments\n\n… but we don’t want to end up turning this scenario into a toy problem; this isn’t Kaggle.\nLet’s keep the focus on evaluation and calibration, as we’re not interested in maximising performance just yet, we’ll save that fun for later when we see what gradient boosting can do."
+  },
+  {
+    "objectID": "projects/pricing-risk.html#coefficient-interpretation",
+    "href": "projects/pricing-risk.html#coefficient-interpretation",
+    "title": "Designing a Predictive Risk Model for High-Value Assets",
+    "section": "Coefficient Interpretation",
+    "text": "Coefficient Interpretation\nInspecting model coefficients helps validate whether learned relationships align with domain expectations.\n\ncoef_df = pd.DataFrame({\n    \"feature\": engineered_features,\n    \"coefficient\": log_reg.coef_[0]\n}).sort_values(by=\"coefficient\", ascending=False)\n\ncoef_df\n\n\n\n\n\n\n\n\nfeature\ncoefficient\n\n\n\n\n4\nprior_claims\n0.524268\n\n\n1\nmileage_band\n0.360799\n\n\n3\nurban_density\n0.180719\n\n\n5\nurban_value_interaction\n0.175511\n\n\n0\nlog_vehicle_value\n0.089934\n\n\n2\nage_band\n-0.291732"
+  },
+  {
+    "objectID": "projects/pricing-risk.html#validation-and-calibration",
+    "href": "projects/pricing-risk.html#validation-and-calibration",
+    "title": "Designing a Predictive Risk Model for High-Value Assets",
+    "section": "Validation and Calibration",
+    "text": "Validation and Calibration\nIn risk‑based decision systems, well‑calibrated probabilities are often as important as ranking performance. We therefore examine calibration behaviour alongside discrimination metrics.\n\nfrom sklearn.calibration import calibration_curve\nimport matplotlib.pyplot as plt\n\nprob_true, prob_pred = calibration_curve(\n    y_test,\n    y_pred_proba,\n    n_bins=10,\n    strategy=\"quantile\"\n)\n\nplt.figure(figsize=(6, 6))\nplt.plot(prob_pred, prob_true, marker=\"o\", label=\"Model\")\nplt.plot([0, 1], [0, 1], linestyle=\"--\", label=\"Perfect calibration\")\nplt.xlabel(\"Predicted probability\")\nplt.ylabel(\"Observed frequency\")\nplt.title(\"Calibration Curve\")\nplt.legend()\nplt.show()\n\n\n\n\n\n\n\n\n\nZoomed in to 0 - 1%\n\nplt.figure(figsize=(6, 6))\nplt.plot(prob_pred, prob_true, marker=\"o\", label=\"Model\")\nplt.plot([0, 0.1], [0, 0.1], linestyle=\"--\", label=\"Perfect calibration\")\n\nplt.xlim(0, 0.01)\nplt.ylim(0, 0.01)\n\nplt.xlabel(\"Predicted probability\")\nplt.ylabel(\"Observed frequency\")\nplt.title(\"Calibration Curve (Zoomed: 0–1%)\")\nplt.legend()\nplt.show()\n\n\n\n\n\n\n\n\nThe calibration curve assesses whether predicted probabilities correspond to observed event frequencies. Predictions that lie close to the diagonal indicate well‑calibrated probabilities, while systematic deviations highlight over‑ or under‑confidence.\nIn rare‑event settings, calibration at higher predicted probabilities can be noisy due to limited sample sizes. Nevertheless, this analysis provides important insight into whether predicted risks are suitable for downstream decision‑making or require post‑hoc calibration.\n\nHistogram of probabilities\n\nplt.figure(figsize=(6, 4))\nplt.hist(y_pred_proba, bins=50)\nplt.xlabel(\"Predicted probability\")\nplt.ylabel(\"Count\")\nplt.title(\"Distribution of Predicted Probabilities\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\nBrier Score\nThe Brier score is defined as $ (p_i - y_i)^2 $ averaged over observations. In other words the average squared error in the predicted probabilities.\nThe Brier score is a proper scoring rule that measures the accuracy of probabilistic predictions. For a binary outcome, it is defined as:\n\\[\n\\text{Brier Score} = \\frac{1}{N} \\sum_{i=1}^{N} (p_i - y_i)^2\n\\]\nwhere \\(p_i\\) is the predicted probability of the event and \\(y_i\\) is the observed outcome.\n\nfrom sklearn.metrics import brier_score_loss\n\nbrier = brier_score_loss(y_test, y_pred_proba)\nbrier\n\n0.0013324230061909923\n\n\nLower Brier scores indicate better overall probability accuracy, penalising both over‑confident and under‑confident predictions. Unlike ROC‑AUC, the Brier score directly reflects the quality of predicted probabilities, making it particularly relevant in risk‑based decision systems.\n\n\n\nBrier Skill Score\nInterpreting the Brier Score is easier with a relative measure like the Brier Skill Score (BSS), which measures the improvement in probabilistic accuracy relative to a reference forecast. It is defined as:\n\\[\n\\text{BSS} = 1 - \\frac{\\text{Brier}_{\\text{model}}}{\\text{Brier}_{\\text{ref}}}\n\\]\nIn this example, the reference forecast is a constant base‑rate model that predicts the empirical event rate for all observations. For rare event scenarios such as the synthetically generated dataset we’re looking at, this is somewhat difficult to beat, so let’s see how we did:\n\nimport numpy as np\nfrom sklearn.metrics import brier_score_loss\n\n# Reference forecast: base rate\nbase_rate = y_train.mean()\ny_ref = np.full_like(y_test, fill_value=base_rate, dtype=float)\n\nbrier_ref = brier_score_loss(y_test, y_ref)\nbrier_model = brier_score_loss(y_test, y_pred_proba)\n\nbrier_skill_score = 1 - (brier_model / brier_ref)\nbrier_skill_score\n\n-0.0006497525279884897\n\n\nA positive Brier Skill Score indicates that the model improves probabilistic accuracy relative to the base‑rate benchmark. Negative means we’re predicting worse than the default base-rate prediction. The Brier Skill Score contextualises absolute probability error by comparing against a naive baseline. In rare‑event problems, even modest positive skill represents meaningful improvement over base‑rate forecasting.\nHowever, it’s important to note that a negative Brier Skill Score does not necessarily mean the model is performing badly. Just that it is not yet calibrated properly. Earlier we saw an okay ROC AUC value, so let’s not panic just yet."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "github.io",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
   },
   {
     "objectID": "about.html",
@@ -35,17 +70,10 @@
     "text": "About this site"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
     "title": "Projects",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\nDesigning a Predictive Risk Model for High-Value Assets"
-  },
-  {
-    "objectID": "projects/pricing-risk.html#data-generation-1",
-    "href": "projects/pricing-risk.html#data-generation-1",
-    "title": "Designing a Predictive Risk Model for High-Value Assets",
-    "section": "Data Generation",
-    "text": "Data Generation\nimport numpy as np import pandas as pd\nnp.random.seed(42)\nn = 20000\ndata = pd.DataFrame({ “vehicle_value”: np.random.lognormal(mean=10, sigma=0.5, size=n), “driver_age”: np.random.randint(18, 80, size=n), “annual_mileage”: np.random.gamma(shape=2, scale=6000, size=n), “urban_density”: np.random.beta(2, 5, size=n), “prior_claims”: np.random.poisson(0.3, size=n) })\nlogit = ( -7.0 + 0.000002 * data[“vehicle_value”] - 0.015 * data[“driver_age”] + 0.00004 * data[“annual_mileage”] + 1.5 * data[“urban_density”] + 0.6 * data[“prior_claims”] )\nprob = 1 / (1 + np.exp(-logit)) data[“high_cost_claim”] = np.random.binomial(1, prob)\ndata.head()"
+    "text": "Below is a selection of self‑contained, IP‑safe demonstration projects showcasing my approach to data science, modelling, and decision‑making in production‑style contexts.\n\nDesigning a Predictive Risk Model for High‑Value Assets"
   }
 ]

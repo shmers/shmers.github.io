@@ -24,5 +24,7 @@ format:
 
 execute:
   engine: python
+  echo: true
+  freeze: false
   python:
     path: py

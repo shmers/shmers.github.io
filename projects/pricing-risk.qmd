@@ -4,9 +4,9 @@ title: "Designing a Predictive Risk Model for High-Value Assets"
 
 ## Overview
 
-This project demonstrates an end‑to‑end approach to designing, validating, and evaluating a predictive risk model in a pricing context. The focus is on modelling judgement, feature design, and validation rather than maximising headline performance metrics.
+This project demonstrates an end‑to‑end approach to designing, validating, and evaluating a predictive risk model in a pricing context. The focus is on modelling judgement, feature design, and validation rather than maximising headline performance metrics. Here I've intentionally generated a challenging synthetic dataset to demonstrate the modelling options available in typical insurance pricing contexts.
 
-All data used in this project is fully synthetic and does not reflect any proprietary datasets.
+Disclaimer to CMA: All data used in this project is fully synthetic (generated right before your very eyes, no less) and does not reflect any proprietary datasets.
 
 ---
 
@@ -15,9 +15,10 @@ All data used in this project is fully synthetic and does not reflect any propri
 We consider a hypothetical insurance‑style problem where the goal is to predict the probability of a high‑cost loss event for individual policies, based on customer, asset, and contextual features.
 
 Key challenges include:
-- Class imbalance
-- Feature leakage
-- Model interpretability vs performance trade‑offs
+
+* Class imbalance
+* Feature leakage
+* Model interpretability vs performance trade‑offs
 
 ---
 
@@ -29,15 +30,10 @@ We generate a synthetic dataset designed to capture common characteristics of re
 - Rare but severe outcomes
 
 ```{python}
----
-
-## Data Generation
-
-```{python}
 import numpy as np
 import pandas as pd
 
-np.random.seed(42)
+np.random.seed(123)
 
 n = 20000
 
@@ -62,3 +58,236 @@ prob = 1 / (1 + np.exp(-logit))
 data["high_cost_claim"] = np.random.binomial(1, prob)
 
 data.head()
+```
+
+---
+
+## Feature Engineering
+
+Feature engineering focuses on incorporating domain knowledge while maintaining interpretability and stability. Transformations are chosen to reflect common approaches used in pricing and risk models, rather than maximising model complexity.
+
+Key considerations include:
+- Handling heavy‑tailed distributions
+- Capturing non‑linear effects
+- Maintaining transparency for downstream stakeholders
+
+```{python}
+import numpy as np
+import pandas as pd
+
+df = data.copy()
+
+# Log-transform heavy-tailed monetary values
+df["log_vehicle_value"] = np.log(df["vehicle_value"])
+
+# Mileage exposure bands
+df["mileage_band"] = pd.cut(
+    df["annual_mileage"],
+    bins=[0, 5000, 10000, 15000, 25000, np.inf],
+    labels=False
+)
+
+# Age bands to capture non-linear risk patterns
+df["age_band"] = pd.cut(
+    df["driver_age"],
+    bins=[17, 25, 35, 50, 65, 100],
+    labels=False
+)
+
+# Interaction: high value asset in dense urban areas
+df["urban_value_interaction"] = (
+    df["urban_density"] * df["log_vehicle_value"]
+)
+
+engineered_features = [
+    "log_vehicle_value",
+    "mileage_band",
+    "age_band",
+    "urban_density",
+    "prior_claims",
+    "urban_value_interaction"
+]
+
+X = df[engineered_features]
+y = df["high_cost_claim"]
+
+X.head()
+```
+
+---
+
+## Modelling Approach
+
+As a baseline, we fit a logistic regression model using the engineered features. Logistic regression provides a transparent and well‑understood benchmark, allowing coefficient‑level interpretation and serving as a reference point for more complex models.
+
+```{python}
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+
+# Train / test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify=y
+)
+
+# Standardise features for logistic regression
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Fit model
+log_reg = LogisticRegression(max_iter=1000)
+log_reg.fit(X_train_scaled, y_train)
+
+# Predict probabilities
+y_pred_proba = log_reg.predict_proba(X_test_scaled)[:, 1]
+
+roc_auc = roc_auc_score(y_test, y_pred_proba)
+roc_auc
+```
+
+To contextualise this value, it's worth bearing in mind that random guessing would achieve an ROC AUC of 0.50, 0.70+ would indicate strong separation, and 1.0 a perfect model.
+
+Our value shows that the model could be stronger, but is still better than random. In a real insurance context we would have at least a few different options to explore here to improve the model:
+
+* Non‑linear effects
+* Interaction terms
+* Behavioural history depth
+* [Latent segments](https://en.wikipedia.org/wiki/Latent_class_model)
+
+... but we don't want to end up turning this scenario into a toy problem; this isn't Kaggle.
+
+Let's keep the focus on evaluation and calibration, as we're not interested in maximising performance just yet, we'll save that fun for later when we see what gradient boosting can do.
+
+---
+
+## Coefficient Interpretation
+
+Inspecting model coefficients helps validate whether learned relationships align with domain expectations.
+
+```{python}
+coef_df = pd.DataFrame({
+    "feature": engineered_features,
+    "coefficient": log_reg.coef_[0]
+}).sort_values(by="coefficient", ascending=False)
+
+coef_df
+```
+
+---
+
+## Validation and Calibration
+
+In risk‑based decision systems, well‑calibrated probabilities are often as important as ranking performance. We therefore examine calibration behaviour alongside discrimination metrics.
+
+```{python}
+from sklearn.calibration import calibration_curve
+import matplotlib.pyplot as plt
+
+prob_true, prob_pred = calibration_curve(
+    y_test,
+    y_pred_proba,
+    n_bins=10,
+    strategy="quantile"
+)
+
+plt.figure(figsize=(6, 6))
+plt.plot(prob_pred, prob_true, marker="o", label="Model")
+plt.plot([0, 1], [0, 1], linestyle="--", label="Perfect calibration")
+plt.xlabel("Predicted probability")
+plt.ylabel("Observed frequency")
+plt.title("Calibration Curve")
+plt.legend()
+plt.show()
+```
+
+---
+
+Zoomed in to 0 - 1%
+
+```{python}
+plt.figure(figsize=(6, 6))
+plt.plot(prob_pred, prob_true, marker="o", label="Model")
+plt.plot([0, 0.1], [0, 0.1], linestyle="--", label="Perfect calibration")
+
+plt.xlim(0, 0.01)
+plt.ylim(0, 0.01)
+
+plt.xlabel("Predicted probability")
+plt.ylabel("Observed frequency")
+plt.title("Calibration Curve (Zoomed: 0–1%)")
+plt.legend()
+plt.show()
+```
+
+The calibration curve assesses whether predicted probabilities correspond to observed event frequencies. Predictions that lie close to the diagonal indicate well‑calibrated probabilities, while systematic deviations highlight over‑ or under‑confidence.
+
+In rare‑event settings, calibration at higher predicted probabilities can be noisy due to limited sample sizes. Nevertheless, this analysis provides important insight into whether predicted risks are suitable for downstream decision‑making or require post‑hoc calibration.
+
+---
+
+Histogram of probabilities
+
+```{python}
+plt.figure(figsize=(6, 4))
+plt.hist(y_pred_proba, bins=50)
+plt.xlabel("Predicted probability")
+plt.ylabel("Count")
+plt.title("Distribution of Predicted Probabilities")
+plt.show()
+```
+
+---
+
+### Brier Score
+
+The Brier score is defined as $ (p_i - y_i)^2 $ averaged over observations. In other words the average squared error in the predicted probabilities.
+
+The Brier score is a proper scoring rule that measures the accuracy of probabilistic predictions. For a binary outcome, it is defined as:
+
+$$
+\text{Brier Score} = \frac{1}{N} \sum_{i=1}^{N} (p_i - y_i)^2
+$$
+
+where $p_i$ is the predicted probability of the event and $y_i$ is the observed outcome.
+
+```{python}
+from sklearn.metrics import brier_score_loss
+
+brier = brier_score_loss(y_test, y_pred_proba)
+brier
+```
+
+Lower Brier scores indicate better overall probability accuracy, penalising both over‑confident and under‑confident predictions. Unlike ROC‑AUC, the Brier score directly reflects the quality of predicted probabilities, making it particularly relevant in risk‑based decision systems.
+
+---
+
+### Brier Skill Score
+
+Interpreting the Brier Score is easier with a relative measure like the Brier Skill Score (BSS), which measures the improvement in probabilistic accuracy relative to a reference forecast. It is defined as:
+
+$$
+\text{BSS} = 1 - \frac{\text{Brier}_{\text{model}}}{\text{Brier}_{\text{ref}}}
+$$
+
+In this example, the reference forecast is a constant base‑rate model that predicts the empirical event rate for all observations. For rare event scenarios such as the synthetically generated dataset we're looking at, this is somewhat difficult to beat, so let's see how we did:
+
+```{python}
+import numpy as np
+from sklearn.metrics import brier_score_loss
+
+# Reference forecast: base rate
+base_rate = y_train.mean()
+y_ref = np.full_like(y_test, fill_value=base_rate, dtype=float)
+
+brier_ref = brier_score_loss(y_test, y_ref)
+brier_model = brier_score_loss(y_test, y_pred_proba)
+
+brier_skill_score = 1 - (brier_model / brier_ref)
+brier_skill_score
+```
+
+A positive Brier Skill Score indicates that the model improves probabilistic accuracy relative to the base‑rate benchmark. Negative means we're predicting worse than the default base-rate prediction. The Brier Skill Score contextualises absolute probability error by comparing against a naive baseline. In rare‑event problems, even modest positive skill represents meaningful improvement over base‑rate forecasting.
+
+However, it's important to note that a negative Brier Skill Score does not necessarily mean the model is performing badly. Just that it is not yet calibrated properly. Earlier we saw an okay ROC AUC value, so let's not panic just yet.

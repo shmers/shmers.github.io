@@ -105,6 +105,13 @@
     "text": "Synthetic Spatial Data\n\nimport numpy as np\nimport pandas as pd\n\nnp.random.seed(123)\n\nn = 20000\n\n# Synthetic latitude / longitude (approximate UK bounding box)\nlat = np.random.uniform(50.0, 55.5, n)\nlon = np.random.uniform(-5.5, 1.8, n)\n\ndf = pd.DataFrame({\n    \"latitude\": lat,\n    \"longitude\": lon\n})\n\ndf.head()\n\n\n\n\n\n\n\n\nlatitude\nlongitude\n\n\n\n\n0\n53.830581\n-4.868714\n\n\n1\n51.573766\n-1.235600\n\n\n2\n51.247683\n-2.048911\n\n\n3\n53.032231\n-0.370855\n\n\n4\n53.957079\n-2.130276"
   },
   {
+    "objectID": "projects/geospatial-risk.html#create-spatial-clusters-of-higher-risk",
+    "href": "projects/geospatial-risk.html#create-spatial-clusters-of-higher-risk",
+    "title": "Incorporating Geospatial Context into Risk Modelling",
+    "section": "Create spatial clusters of higher risk",
+    "text": "Create spatial clusters of higher risk\n\nrisk_centers = [\n    (51.5, -0.1),   # London\n    (53.5, -2.3),   # Manchester\n    (52.5, -1.9)    # Birmingham\n]\n\nrisk = np.zeros(n)\n\nfor lat_c, lon_c in risk_centers:\n    dist = np.sqrt((df[\"latitude\"] - lat_c)**2 + (df[\"longitude\"] - lon_c)**2)\n    risk += np.exp(-dist / 0.5)\n\n# Normalise\nrisk = risk / risk.max()\n\ndf[\"spatial_risk\"] = risk\n\ndf.head()\n\n\n\n\n\n\n\n\nlatitude\nlongitude\nspatial_risk\n\n\n\n\n0\n53.830581\n-4.868714\n0.006423\n\n\n1\n51.573766\n-1.235600\n0.195246\n\n\n2\n51.247683\n-2.048911\n0.099452\n\n\n3\n53.032231\n-0.370855\n0.092219\n\n\n4\n53.957079\n-2.130276\n0.387473"
+  },
+  {
     "objectID": "projects/geospatial-risk.html#event-generation",
     "href": "projects/geospatial-risk.html#event-generation",
     "title": "Incorporating Geospatial Context into Risk Modelling",
@@ -116,7 +123,7 @@
     "href": "about.html",
     "title": "About me",
     "section": "",
-    "text": "Outside of work, I enjoy chess, music, and endurance sports. I find these interests complement analytical work by encouraging long‑term thinking, focus, and resilience.\nI’m an avid 3d printing enthusiast, speculative fiction reader, and amateur android app developer (for brain training apps and other simple games for which I design my own AI agents)."
+    "text": "Outside of work, I enjoy chess, music, and endurance sports. I find these interests complement analytical work by encouraging long‑term thinking, focus, and resilience.\nI’m a 3d printing enthusiast, speculative fiction reader, and devoted cat dad.\nDuring my 2025 career break I’ve also become an amateur android app developer (so far for brain training apps and logic / puzzle games)."
   },
   {
     "objectID": "index.html",
@@ -159,5 +166,12 @@
     "title": "Projects",
     "section": "",
     "text": "Below is a selection of self‑contained, IP‑safe demonstration projects showcasing my approach to data science, modelling, and decision‑making in production‑style contexts.\n\nDesigning a Predictive Risk Model for High‑Value Assets\nGeospatial Enhancements to Risk Modelling"
+  },
+  {
+    "objectID": "projects/geospatial-risk.html#wip---visualisation",
+    "href": "projects/geospatial-risk.html#wip---visualisation",
+    "title": "Incorporating Geospatial Context into Risk Modelling",
+    "section": "WIP - Visualisation",
+    "text": "WIP - Visualisation"
   }
 ]

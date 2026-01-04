@@ -43,9 +43,9 @@ df = pd.DataFrame({
 
 df.head()
 ```
+---
 
-
-# Create spatial clusters of higher risk
+## Create spatial clusters of higher risk
 
 ```{python}
 risk_centers = [
@@ -68,6 +68,8 @@ df["spatial_risk"] = risk
 df.head()
 ```
 
+---
+
 ## Event Generation
 
 ```{python}
@@ -78,3 +80,7 @@ df["event"] = np.random.binomial(1, prob)
 
 df["event"].mean()
 ```
+
+---
+
+## WIP - Visualisation

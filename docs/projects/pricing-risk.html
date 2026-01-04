@@ -105,7 +105,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
+
+
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -259,7 +262,7 @@ window.Quarto = {
 <li>Correlated features</li>
 <li>Rare but severe outcomes</li>
 </ul>
-<div id="2db4c92b" class="cell" data-execution_count="1">
+<div id="69b6d67f" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -362,7 +365,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="feature-engineering">Feature Engineering</h2>
 <p>We’ll keep feature engineering very basic here, banding features for interpretability and stability, with transformations / interactions chosen to reflect common approaches used in pricing and risk models, rather than going for model complexity straight away.</p>
 <p>Key considerations include: - Handling heavy‑tailed distributions - Capturing non‑linear effects - Maintaining transparency for downstream stakeholders</p>
-<div id="39fef8be" class="cell" data-execution_count="2">
+<div id="0d3e7d61" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -476,7 +479,7 @@ window.Quarto = {
 <section id="modelling-approach" class="level2">
 <h2 class="anchored" data-anchor-id="modelling-approach">Modelling Approach</h2>
 <p>As a baseline, let’s fit a logistic regression model using the engineered features. Logistic regression provides a transparent and well‑understood benchmark, allowing coefficient‑level interpretation and serving as a reference point for more complex models later on.</p>
-<div id="44e96dcb" class="cell" data-execution_count="3">
+<div id="3cdd885c" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
@@ -520,7 +523,7 @@ window.Quarto = {
 <section id="coefficient-interpretation" class="level2">
 <h2 class="anchored" data-anchor-id="coefficient-interpretation">Coefficient Interpretation</h2>
 <p>Inspecting model coefficients quickly helps us validate whether learned relationships align with domain expectations.</p>
-<div id="9b575cfd" class="cell" data-execution_count="4">
+<div id="9ae05eef" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>coef_df <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"feature"</span>: engineered_features,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"coefficient"</span>: log_reg.coef_[<span class="dv">0</span>]</span>
@@ -583,7 +586,7 @@ window.Quarto = {
 <section id="validation-and-calibration" class="level2">
 <h2 class="anchored" data-anchor-id="validation-and-calibration">Validation and Calibration</h2>
 <p>In risk‑based decision systems, well‑calibrated probabilities are often as important as ranking performance. We therefore examine calibration behaviour alongside discrimination metrics.</p>
-<div id="76712826" class="cell" data-execution_count="5">
+<div id="baa787c9" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.calibration <span class="im">import</span> calibration_curve</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -613,7 +616,7 @@ window.Quarto = {
 <p>Not much to see here, it seems… We’ve chosen a difficult problem to model, that of a rare-event setting, such as a large 3rd party BI claim in UK motor insurance. Let’s see how far we’d need to zoom in to see what’s going on.</p>
 <hr>
 <p>Histogram of probabilities</p>
-<div id="11a45503" class="cell" data-execution_count="6">
+<div id="0484b487" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plt.hist(y_pred_proba, bins<span class="op">=</span><span class="dv">50</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Predicted probability"</span>)</span>
@@ -631,7 +634,7 @@ window.Quarto = {
 <p>So looks like probabilities are only significantly allocated between 0% and 1%</p>
 <hr>
 <p>Zoomed in to 0 - 1%</p>
-<div id="b5654702" class="cell" data-execution_count="7">
+<div id="c4bb890e" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">6</span>))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.plot(prob_pred, prob_true, marker<span class="op">=</span><span class="st">"o"</span>, label<span class="op">=</span><span class="st">"Model"</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="fl">0.1</span>], [<span class="dv">0</span>, <span class="fl">0.1</span>], linestyle<span class="op">=</span><span class="st">"--"</span>, label<span class="op">=</span><span class="st">"Perfect calibration"</span>)</span>
@@ -664,7 +667,7 @@ window.Quarto = {
 \text{Brier Score} = \frac{1}{N} \sum_{i=1}^{N} (p_i - y_i)^2
 \]</span></p>
 <p>where <span class="math inline">\(p_i\)</span> is the predicted probability of the event and <span class="math inline">\(y_i\)</span> is the observed outcome.</p>
-<div id="fbdaf18c" class="cell" data-execution_count="8">
+<div id="dccc3c0e" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> brier_score_loss</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>brier <span class="op">=</span> brier_score_loss(y_test, y_pred_proba)</span>
@@ -684,7 +687,7 @@ window.Quarto = {
 \text{BSS} = 1 - \frac{\text{Brier}_{\text{model}}}{\text{Brier}_{\text{ref}}}
 \]</span></p>
 <p>In this example, the reference forecast is a constant base‑rate model that predicts the empirical event rate for all observations. For rare event scenarios such as the synthetically generated dataset we’re looking at, this is somewhat difficult to beat, so let’s see how we did:</p>
-<div id="c38255bd" class="cell" data-execution_count="9">
+<div id="f46b8ad0" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> brier_score_loss</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -709,7 +712,7 @@ window.Quarto = {
 <section id="posthoc-calibration-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="posthoc-calibration-comparison">Post‑Hoc Calibration Comparison</h2>
 <p>To assess whether probability calibration improves probabilistic accuracy, we compare the uncalibrated model against two post‑hoc calibration approaches: Platt scaling and isotonic regression.</p>
-<div id="d3c087bf" class="cell" data-execution_count="10">
+<div id="80bb8a4d" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.calibration <span class="im">import</span> CalibratedClassifierCV</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> brier_score_loss</span>
@@ -791,7 +794,7 @@ window.Quarto = {
 </div>
 <hr>
 <p>Compute Brier Skill scores</p>
-<div id="bceae8a9" class="cell" data-execution_count="11">
+<div id="62078647" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>results[<span class="st">"Brier Skill Score"</span>] <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> (</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    results[<span class="st">"Brier score"</span>] <span class="op">/</span> brier_score_loss(y_test, y_ref)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -841,7 +844,7 @@ window.Quarto = {
 <section id="calibration-curves-before-and-after-calibration" class="level2">
 <h2 class="anchored" data-anchor-id="calibration-curves-before-and-after-calibration">Calibration Curves: Before and After Calibration</h2>
 <p>To visualise the effect of post‑hoc calibration, we compare calibration curves for the uncalibrated model and the calibrated variants. Given the rarity of the event, the plot focuses on the probability range where most predictions lie.</p>
-<div id="f73e7a02" class="cell" data-execution_count="12">
+<div id="f68f4ee7" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.calibration <span class="im">import</span> calibration_curve</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>

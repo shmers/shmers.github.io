@@ -25,9 +25,10 @@ Key challenges include:
 ## Data Generation
 
 We generate a synthetic dataset designed to capture common characteristics of real‑world consumer risk portfolios:
-- Skewed loss distribution
-- Correlated features
-- Rare but severe outcomes
+
+* Skewed loss distribution
+* Correlated features
+* Rare but severe outcomes
 
 ```{python}
 import numpy as np
@@ -64,7 +65,7 @@ data.head()
 
 ## Feature Engineering
 
-Feature engineering focuses on incorporating domain knowledge while maintaining interpretability and stability. Transformations are chosen to reflect common approaches used in pricing and risk models, rather than maximising model complexity.
+We'll keep feature engineering very basic here, banding features for interpretability and stability, with transformations / interactions chosen to reflect common approaches used in pricing and risk models, rather than going for model complexity straight away.
 
 Key considerations include:
 - Handling heavy‑tailed distributions
@@ -118,7 +119,7 @@ X.head()
 
 ## Modelling Approach
 
-As a baseline, we fit a logistic regression model using the engineered features. Logistic regression provides a transparent and well‑understood benchmark, allowing coefficient‑level interpretation and serving as a reference point for more complex models.
+As a baseline, let's fit a logistic regression model using the engineered features. Logistic regression provides a transparent and well‑understood benchmark, allowing coefficient‑level interpretation and serving as a reference point for more complex models later on.
 
 ```{python}
 from sklearn.model_selection import train_test_split
@@ -164,7 +165,7 @@ Let's keep the focus on evaluation and calibration, as we're not interested in m
 
 ## Coefficient Interpretation
 
-Inspecting model coefficients helps validate whether learned relationships align with domain expectations.
+Inspecting model coefficients quickly helps us validate whether learned relationships align with domain expectations.
 
 ```{python}
 coef_df = pd.DataFrame({
@@ -174,6 +175,10 @@ coef_df = pd.DataFrame({
 
 coef_df
 ```
+
+Obviously since we created the label ourselves using a logit distribution we're not surprised to see the original coefficient values reflected here in the logistic regression model. In reality at this stage of modelling we wouldn't be expecting to deduce anything profound yet from an unsophisticated view such as this, but we might opt to construct a rough-and-ready feedback loop with our feature engineering choices for rapid prototyping.
+
+In my experience this type of feedback loop can pay dividends for improving the efficacy of engineered features without too much additional time or resource, and works especially well when the chosen evaluation metrics are thoughtfully chosen, such as measures of marginal predictive skill contribution / model uplift on a feature level basis.   
 
 ---
 
@@ -202,6 +207,22 @@ plt.legend()
 plt.show()
 ```
 
+Not much to see here, it seems... We've chosen a difficult problem to model, that of a rare-event setting, such as a large 3rd party BI claim in UK motor insurance. Let's see how far we'd need to zoom in to see what's going on.
+
+---
+
+Histogram of probabilities
+
+```{python}
+plt.figure(figsize=(6, 4))
+plt.hist(y_pred_proba, bins=50)
+plt.xlabel("Predicted probability")
+plt.ylabel("Count")
+plt.title("Distribution of Predicted Probabilities")
+plt.show()
+```
+So looks like probabilities are only significantly allocated between 0% and 1%
+
 ---
 
 Zoomed in to 0 - 1%
@@ -225,18 +246,7 @@ The calibration curve assesses whether predicted probabilities correspond to obs
 
 In rare‑event settings, calibration at higher predicted probabilities can be noisy due to limited sample sizes. Nevertheless, this analysis provides important insight into whether predicted risks are suitable for downstream decision‑making or require post‑hoc calibration.
 
----
-
-Histogram of probabilities
-
-```{python}
-plt.figure(figsize=(6, 4))
-plt.hist(y_pred_proba, bins=50)
-plt.xlabel("Predicted probability")
-plt.ylabel("Count")
-plt.title("Distribution of Predicted Probabilities")
-plt.show()
-```
+Here we can see that the model seems passable at assigning probabilities that aren't too far off of the mark, generally speaking. If we had grouped more aggressively we might not see as much noise, but I tend to prefer erring on the side of seeing the noise and reassuring myself that it truly is noise, and not a systematic calibration error that may need further thought. Here the points seem fairly randomly distributed around the perfect calibration line, so no strong need for post-hoc calibration necessarily yet, but there's more we can do to answer this concern. 
 
 ---
 
@@ -260,6 +270,8 @@ brier
 ```
 
 Lower Brier scores indicate better overall probability accuracy, penalising both over‑confident and under‑confident predictions. Unlike ROC‑AUC, the Brier score directly reflects the quality of predicted probabilities, making it particularly relevant in risk‑based decision systems.
+
+Although this value looks fairly low in absolute terms, let's bear in mind that we'll need to check against a logical benchmark to know how good a score this is, and whether we should be reassured or alarmed at its value.
 
 ---
 
@@ -290,4 +302,121 @@ brier_skill_score
 
 A positive Brier Skill Score indicates that the model improves probabilistic accuracy relative to the base‑rate benchmark. Negative means we're predicting worse than the default base-rate prediction. The Brier Skill Score contextualises absolute probability error by comparing against a naive baseline. In rare‑event problems, even modest positive skill represents meaningful improvement over base‑rate forecasting.
 
-However, it's important to note that a negative Brier Skill Score does not necessarily mean the model is performing badly. Just that it is not yet calibrated properly. Earlier we saw an okay ROC AUC value, so let's not panic just yet.
+However, it's important to note that a negative Brier Skill Score does not necessarily mean the model is performing badly. Just that it is not yet calibrated properly. Earlier we saw an okay ROC AUC value, so let's consider post-hoc calibration options to see whether we can optimise our probabilities without deteriorating the ranking performance that we were otherwise happy with.
+
+---
+
+## Post‑Hoc Calibration Comparison
+
+To assess whether probability calibration improves probabilistic accuracy, we compare the uncalibrated model against two post‑hoc calibration approaches: Platt scaling and isotonic regression.
+
+```{python}
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import brier_score_loss
+import pandas as pd
+
+# Base model (same specification)
+base_model = LogisticRegression(max_iter=1000)
+
+# Platt scaling (sigmoid)
+platt_model = CalibratedClassifierCV(
+    base_model,
+    method="sigmoid",
+    cv=5
+)
+
+# Isotonic calibration
+isotonic_model = CalibratedClassifierCV(
+    base_model,
+    method="isotonic",
+    cv=5
+)
+
+# Fit calibrated models
+platt_model.fit(X_train_scaled, y_train)
+isotonic_model.fit(X_train_scaled, y_train)
+
+# Predict probabilities
+y_platt = platt_model.predict_proba(X_test_scaled)[:, 1]
+y_isotonic = isotonic_model.predict_proba(X_test_scaled)[:, 1]
+
+# Base-rate reference
+base_rate = y_train.mean()
+y_ref = np.full_like(y_test, base_rate, dtype=float)
+
+# Compute Brier scores
+results = pd.DataFrame({
+    "Model": ["Uncalibrated", "Platt scaling", "Isotonic"],
+    "Brier score": [
+        brier_score_loss(y_test, y_pred_proba),
+        brier_score_loss(y_test, y_platt),
+        brier_score_loss(y_test, y_isotonic)
+    ]
+})
+
+results
+```
+
+---
+
+Compute Brier Skill scores
+
+```{python}
+results["Brier Skill Score"] = 1 - (
+    results["Brier score"] / brier_score_loss(y_test, y_ref)
+)
+
+results
+```
+
+Post‑hoc calibration improves probability scaling relative to the uncalibrated model, reducing overall Brier score. We can see here that both Platt scaling and Isotonic calibration improved our Brier Skill score into a slight positive result, from negative originally. This confirms our suspicion that our model probabilities were suffering from a calibration issue. Let's redraw our calibration curve and see the difference.
+
+---
+
+## Calibration Curves: Before and After Calibration
+
+To visualise the effect of post‑hoc calibration, we compare calibration curves for the uncalibrated model and the calibrated variants. Given the rarity of the event, the plot focuses on the probability range where most predictions lie.
+
+```{python}
+from sklearn.calibration import calibration_curve
+import matplotlib.pyplot as plt
+
+# Compute calibration curves
+prob_true_uncal, prob_pred_uncal = calibration_curve(
+    y_test, y_pred_proba, n_bins=5, strategy="quantile"
+)
+
+prob_true_platt, prob_pred_platt = calibration_curve(
+    y_test, y_platt, n_bins=5, strategy="quantile"
+)
+
+prob_true_iso, prob_pred_iso = calibration_curve(
+    y_test, y_isotonic, n_bins=5, strategy="quantile"
+)
+
+# Plot
+plt.figure(figsize=(7, 7))
+
+plt.plot(prob_pred_uncal, prob_true_uncal, marker="o", label="Uncalibrated")
+plt.plot(prob_pred_platt, prob_true_platt, marker="o", label="Platt scaling")
+plt.plot(prob_pred_iso, prob_true_iso, marker="o", label="Isotonic")
+
+# Perfect calibration reference
+plt.plot([0, 0.005], [0, 0.005], linestyle="--", color="black", label="Perfect calibration")
+
+# Zoomed axes for rare-event setting
+plt.xlim(0, 0.005)
+plt.ylim(0, 0.005)
+
+plt.xlabel("Predicted probability")
+plt.ylabel("Observed frequency")
+plt.title("Calibration Curves (Zoomed: 0–0.5%)")
+plt.legend()
+plt.grid(alpha=0.3)
+plt.show()
+```
+
+Post‑hoc calibration improves the alignment between predicted probabilities and observed event frequencies. Platt scaling provides a smooth adjustment that improves probability reliability, while isotonic calibration offers greater flexibility at the cost of increased variance in sparse regions. In rare‑event settings, these trade‑offs must be balanced thoughtfully.
+
+## Todo - Gradient Boosting

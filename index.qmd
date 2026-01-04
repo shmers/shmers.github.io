@@ -1,7 +1,43 @@
 ---
-title: "github.io"
+title: "Morris Jones"
 ---
 
-This is a Quarto website.
+## Senior Data Scientist
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+I am a senior data scientist with over 10 years of experience designing, validating, and deploying predictive models in production environments. My background spans insurance, reinsurance, and financial services, with a focus on risk modelling, probability estimation, and data‑driven decision‑making under uncertainty.
+
+This site presents a selection of **IP‑safe, self‑contained demonstration projects** that illustrate my approach to modelling, evaluation, and communication.
+
+---
+
+## Areas of Focus
+
+- Predictive risk and pricing models  
+- Rare‑event modelling and probability calibration  
+- Model validation, monitoring, and governance  
+- Applied machine learning in regulated environments  
+
+---
+
+## Featured Project
+
+### Designing a Predictive Risk Model for High‑Value Assets
+
+An end‑to‑end demonstration of a rare‑event risk modelling workflow, covering:
+
+- Synthetic data generation
+- Domain‑informed feature engineering
+- Baseline modelling and interpretation
+- Calibration, Brier score, and Brier Skill Score
+- Post‑hoc probability calibration
+
+👉 [View project](projects/pricing-risk.qmd)
+
+---
+
+## Get in Touch
+
+If you’re interested in discussing senior data science opportunities or would like to talk through any of the work shown here, feel free to get in touch.
+
+- 📧 [**morris.jones123@gmail.com**](mailto:morris.jones123+shmers_ds_query@gmail.com)
+- 🔗 [GitHub](https://github.com/shmers)

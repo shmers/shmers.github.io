@@ -1,0 +1,80 @@
+---
+title: "Incorporating Geospatial Context into Risk Modelling"
+---
+
+## Overview
+
+This project demonstrates how geospatial context can be incorporated into predictive risk models using aggregated, non‑identifying spatial features. The emphasis is on feature construction, spatial smoothing, and avoiding information leakage rather than on fine‑grained location data.
+
+All data used in this project is synthetic or publicly available.
+
+---
+
+## Problem Statement
+
+We consider a hypothetical risk prediction problem where event likelihood varies spatially due to underlying environmental, behavioural, or socio‑economic factors. The goal is to construct geospatial features that capture this variation in a stable and privacy‑preserving way.
+
+Key challenges include:
+
+* Spatial leakage
+* Sparsity in fine‑grained locations
+* Balancing resolution with robustness
+
+---
+
+## Synthetic Spatial Data
+
+```{python}
+import numpy as np
+import pandas as pd
+
+np.random.seed(123)
+
+n = 20000
+
+# Synthetic latitude / longitude (approximate UK bounding box)
+lat = np.random.uniform(50.0, 55.5, n)
+lon = np.random.uniform(-5.5, 1.8, n)
+
+df = pd.DataFrame({
+    "latitude": lat,
+    "longitude": lon
+})
+
+df.head()
+```
+
+
+# Create spatial clusters of higher risk
+
+```{python}
+risk_centers = [
+    (51.5, -0.1),   # London
+    (53.5, -2.3),   # Manchester
+    (52.5, -1.9)    # Birmingham
+]
+
+risk = np.zeros(n)
+
+for lat_c, lon_c in risk_centers:
+    dist = np.sqrt((df["latitude"] - lat_c)**2 + (df["longitude"] - lon_c)**2)
+    risk += np.exp(-dist / 0.5)
+
+# Normalise
+risk = risk / risk.max()
+
+df["spatial_risk"] = risk
+
+df.head()
+```
+
+## Event Generation
+
+```{python}
+logit = -4.0 + 2.0 * df["spatial_risk"]
+prob = 1 / (1 + np.exp(-logit))
+
+df["event"] = np.random.binomial(1, prob)
+
+df["event"].mean()
+```

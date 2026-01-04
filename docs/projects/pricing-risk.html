@@ -206,6 +206,9 @@ window.Quarto = {
   <li><a href="#brier-score" id="toc-brier-score" class="nav-link" data-scroll-target="#brier-score">Brier Score</a></li>
   <li><a href="#brier-skill-score" id="toc-brier-skill-score" class="nav-link" data-scroll-target="#brier-skill-score">Brier Skill Score</a></li>
   </ul></li>
+  <li><a href="#posthoc-calibration-comparison" id="toc-posthoc-calibration-comparison" class="nav-link" data-scroll-target="#posthoc-calibration-comparison">Post‑Hoc Calibration Comparison</a></li>
+  <li><a href="#calibration-curves-before-and-after-calibration" id="toc-calibration-curves-before-and-after-calibration" class="nav-link" data-scroll-target="#calibration-curves-before-and-after-calibration">Calibration Curves: Before and After Calibration</a></li>
+  <li><a href="#todo---gradient-boosting" id="toc-todo---gradient-boosting" class="nav-link" data-scroll-target="#todo---gradient-boosting">Todo - Gradient Boosting</a></li>
   </ul>
 </nav>
     </div>
@@ -250,8 +253,13 @@ window.Quarto = {
 </section>
 <section id="data-generation" class="level2">
 <h2 class="anchored" data-anchor-id="data-generation">Data Generation</h2>
-<p>We generate a synthetic dataset designed to capture common characteristics of real‑world consumer risk portfolios: - Skewed loss distribution - Correlated features - Rare but severe outcomes</p>
-<div id="8a7ccbeb" class="cell" data-execution_count="1">
+<p>We generate a synthetic dataset designed to capture common characteristics of real‑world consumer risk portfolios:</p>
+<ul>
+<li>Skewed loss distribution</li>
+<li>Correlated features</li>
+<li>Rare but severe outcomes</li>
+</ul>
+<div id="2db4c92b" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -352,9 +360,9 @@ window.Quarto = {
 </section>
 <section id="feature-engineering" class="level2">
 <h2 class="anchored" data-anchor-id="feature-engineering">Feature Engineering</h2>
-<p>Feature engineering focuses on incorporating domain knowledge while maintaining interpretability and stability. Transformations are chosen to reflect common approaches used in pricing and risk models, rather than maximising model complexity.</p>
+<p>We’ll keep feature engineering very basic here, banding features for interpretability and stability, with transformations / interactions chosen to reflect common approaches used in pricing and risk models, rather than going for model complexity straight away.</p>
 <p>Key considerations include: - Handling heavy‑tailed distributions - Capturing non‑linear effects - Maintaining transparency for downstream stakeholders</p>
-<div id="6b7f4ee1" class="cell" data-execution_count="2">
+<div id="39fef8be" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -467,8 +475,8 @@ window.Quarto = {
 </section>
 <section id="modelling-approach" class="level2">
 <h2 class="anchored" data-anchor-id="modelling-approach">Modelling Approach</h2>
-<p>As a baseline, we fit a logistic regression model using the engineered features. Logistic regression provides a transparent and well‑understood benchmark, allowing coefficient‑level interpretation and serving as a reference point for more complex models.</p>
-<div id="62b2c662" class="cell" data-execution_count="3">
+<p>As a baseline, let’s fit a logistic regression model using the engineered features. Logistic regression provides a transparent and well‑understood benchmark, allowing coefficient‑level interpretation and serving as a reference point for more complex models later on.</p>
+<div id="44e96dcb" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
@@ -511,8 +519,8 @@ window.Quarto = {
 </section>
 <section id="coefficient-interpretation" class="level2">
 <h2 class="anchored" data-anchor-id="coefficient-interpretation">Coefficient Interpretation</h2>
-<p>Inspecting model coefficients helps validate whether learned relationships align with domain expectations.</p>
-<div id="34e74c39" class="cell" data-execution_count="4">
+<p>Inspecting model coefficients quickly helps us validate whether learned relationships align with domain expectations.</p>
+<div id="9b575cfd" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>coef_df <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"feature"</span>: engineered_features,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"coefficient"</span>: log_reg.coef_[<span class="dv">0</span>]</span>
@@ -568,12 +576,14 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<p>Obviously since we created the label ourselves using a logit distribution we’re not surprised to see the original coefficient values reflected here in the logistic regression model. In reality at this stage of modelling we wouldn’t be expecting to deduce anything profound yet from an unsophisticated view such as this, but we might opt to construct a rough-and-ready feedback loop with our feature engineering choices for rapid prototyping.</p>
+<p>In my experience this type of feedback loop can pay dividends for improving the efficacy of engineered features without too much additional time or resource, and works especially well when the chosen evaluation metrics are thoughtfully chosen, such as measures of marginal predictive skill contribution / model uplift on a feature level basis.</p>
 <hr>
 </section>
 <section id="validation-and-calibration" class="level2">
 <h2 class="anchored" data-anchor-id="validation-and-calibration">Validation and Calibration</h2>
 <p>In risk‑based decision systems, well‑calibrated probabilities are often as important as ranking performance. We therefore examine calibration behaviour alongside discrimination metrics.</p>
-<div id="d36d9f6a" class="cell" data-execution_count="5">
+<div id="76712826" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.calibration <span class="im">import</span> calibration_curve</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -600,48 +610,51 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<p>Not much to see here, it seems… We’ve chosen a difficult problem to model, that of a rare-event setting, such as a large 3rd party BI claim in UK motor insurance. Let’s see how far we’d need to zoom in to see what’s going on.</p>
 <hr>
-<p>Zoomed in to 0 - 1%</p>
-<div id="02f2965b" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">6</span>))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plt.plot(prob_pred, prob_true, marker<span class="op">=</span><span class="st">"o"</span>, label<span class="op">=</span><span class="st">"Model"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="fl">0.1</span>], [<span class="dv">0</span>, <span class="fl">0.1</span>], linestyle<span class="op">=</span><span class="st">"--"</span>, label<span class="op">=</span><span class="st">"Perfect calibration"</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="dv">0</span>, <span class="fl">0.01</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="dv">0</span>, <span class="fl">0.01</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Predicted probability"</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Observed frequency"</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Calibration Curve (Zoomed: 0–1%)"</span>)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Histogram of probabilities</p>
+<div id="11a45503" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plt.hist(y_pred_proba, bins<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Predicted probability"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Count"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Distribution of Predicted Probabilities"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="pricing-risk_files/figure-html/cell-7-output-1.png" width="550" height="523" class="figure-img"></p>
+<p><img src="pricing-risk_files/figure-html/cell-7-output-1.png" width="527" height="376" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>So looks like probabilities are only significantly allocated between 0% and 1%</p>
+<hr>
+<p>Zoomed in to 0 - 1%</p>
+<div id="b5654702" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">6</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.plot(prob_pred, prob_true, marker<span class="op">=</span><span class="st">"o"</span>, label<span class="op">=</span><span class="st">"Model"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="fl">0.1</span>], [<span class="dv">0</span>, <span class="fl">0.1</span>], linestyle<span class="op">=</span><span class="st">"--"</span>, label<span class="op">=</span><span class="st">"Perfect calibration"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="dv">0</span>, <span class="fl">0.01</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="dv">0</span>, <span class="fl">0.01</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Predicted probability"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Observed frequency"</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Calibration Curve (Zoomed: 0–1%)"</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="pricing-risk_files/figure-html/cell-8-output-1.png" width="550" height="523" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>The calibration curve assesses whether predicted probabilities correspond to observed event frequencies. Predictions that lie close to the diagonal indicate well‑calibrated probabilities, while systematic deviations highlight over‑ or under‑confidence.</p>
 <p>In rare‑event settings, calibration at higher predicted probabilities can be noisy due to limited sample sizes. Nevertheless, this analysis provides important insight into whether predicted risks are suitable for downstream decision‑making or require post‑hoc calibration.</p>
-<hr>
-<p>Histogram of probabilities</p>
-<div id="76460f0d" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.hist(y_pred_proba, bins<span class="op">=</span><span class="dv">50</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Predicted probability"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Count"</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Distribution of Predicted Probabilities"</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="pricing-risk_files/figure-html/cell-8-output-1.png" width="527" height="376" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
+<p>Here we can see that the model seems passable at assigning probabilities that aren’t too far off of the mark, generally speaking. If we had grouped more aggressively we might not see as much noise, but I tend to prefer erring on the side of seeing the noise and reassuring myself that it truly is noise, and not a systematic calibration error that may need further thought. Here the points seem fairly randomly distributed around the perfect calibration line, so no strong need for post-hoc calibration necessarily yet, but there’s more we can do to answer this concern.</p>
 <hr>
 <section id="brier-score" class="level3">
 <h3 class="anchored" data-anchor-id="brier-score">Brier Score</h3>
@@ -651,7 +664,7 @@ window.Quarto = {
 \text{Brier Score} = \frac{1}{N} \sum_{i=1}^{N} (p_i - y_i)^2
 \]</span></p>
 <p>where <span class="math inline">\(p_i\)</span> is the predicted probability of the event and <span class="math inline">\(y_i\)</span> is the observed outcome.</p>
-<div id="2648fb65" class="cell" data-execution_count="8">
+<div id="fbdaf18c" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> brier_score_loss</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>brier <span class="op">=</span> brier_score_loss(y_test, y_pred_proba)</span>
@@ -661,6 +674,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Lower Brier scores indicate better overall probability accuracy, penalising both over‑confident and under‑confident predictions. Unlike ROC‑AUC, the Brier score directly reflects the quality of predicted probabilities, making it particularly relevant in risk‑based decision systems.</p>
+<p>Although this value looks fairly low in absolute terms, let’s bear in mind that we’ll need to check against a logical benchmark to know how good a score this is, and whether we should be reassured or alarmed at its value.</p>
 <hr>
 </section>
 <section id="brier-skill-score" class="level3">
@@ -670,7 +684,7 @@ window.Quarto = {
 \text{BSS} = 1 - \frac{\text{Brier}_{\text{model}}}{\text{Brier}_{\text{ref}}}
 \]</span></p>
 <p>In this example, the reference forecast is a constant base‑rate model that predicts the empirical event rate for all observations. For rare event scenarios such as the synthetically generated dataset we’re looking at, this is somewhat difficult to beat, so let’s see how we did:</p>
-<div id="de2ff0d5" class="cell" data-execution_count="9">
+<div id="c38255bd" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> brier_score_loss</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -688,10 +702,196 @@ window.Quarto = {
 </div>
 </div>
 <p>A positive Brier Skill Score indicates that the model improves probabilistic accuracy relative to the base‑rate benchmark. Negative means we’re predicting worse than the default base-rate prediction. The Brier Skill Score contextualises absolute probability error by comparing against a naive baseline. In rare‑event problems, even modest positive skill represents meaningful improvement over base‑rate forecasting.</p>
-<p>However, it’s important to note that a negative Brier Skill Score does not necessarily mean the model is performing badly. Just that it is not yet calibrated properly. Earlier we saw an okay ROC AUC value, so let’s not panic just yet.</p>
-
-
+<p>However, it’s important to note that a negative Brier Skill Score does not necessarily mean the model is performing badly. Just that it is not yet calibrated properly. Earlier we saw an okay ROC AUC value, so let’s consider post-hoc calibration options to see whether we can optimise our probabilities without deteriorating the ranking performance that we were otherwise happy with.</p>
+<hr>
 </section>
+</section>
+<section id="posthoc-calibration-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="posthoc-calibration-comparison">Post‑Hoc Calibration Comparison</h2>
+<p>To assess whether probability calibration improves probabilistic accuracy, we compare the uncalibrated model against two post‑hoc calibration approaches: Platt scaling and isotonic regression.</p>
+<div id="d3c087bf" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.calibration <span class="im">import</span> CalibratedClassifierCV</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> brier_score_loss</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Base model (same specification)</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>base_model <span class="op">=</span> LogisticRegression(max_iter<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Platt scaling (sigmoid)</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>platt_model <span class="op">=</span> CalibratedClassifierCV(</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    base_model,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">"sigmoid"</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Isotonic calibration</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>isotonic_model <span class="op">=</span> CalibratedClassifierCV(</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    base_model,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">"isotonic"</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit calibrated models</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>platt_model.fit(X_train_scaled, y_train)</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>isotonic_model.fit(X_train_scaled, y_train)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict probabilities</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>y_platt <span class="op">=</span> platt_model.predict_proba(X_test_scaled)[:, <span class="dv">1</span>]</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>y_isotonic <span class="op">=</span> isotonic_model.predict_proba(X_test_scaled)[:, <span class="dv">1</span>]</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Base-rate reference</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>base_rate <span class="op">=</span> y_train.mean()</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>y_ref <span class="op">=</span> np.full_like(y_test, base_rate, dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Brier scores</span></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Model"</span>: [<span class="st">"Uncalibrated"</span>, <span class="st">"Platt scaling"</span>, <span class="st">"Isotonic"</span>],</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Brier score"</span>: [</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>        brier_score_loss(y_test, y_pred_proba),</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>        brier_score_loss(y_test, y_platt),</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>        brier_score_loss(y_test, y_isotonic)</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Model</th>
+<th data-quarto-table-cell-role="th">Brier score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Uncalibrated</td>
+<td>0.001332</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Platt scaling</td>
+<td>0.001331</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Isotonic</td>
+<td>0.001331</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<hr>
+<p>Compute Brier Skill scores</p>
+<div id="bceae8a9" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>results[<span class="st">"Brier Skill Score"</span>] <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> (</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    results[<span class="st">"Brier score"</span>] <span class="op">/</span> brier_score_loss(y_test, y_ref)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Model</th>
+<th data-quarto-table-cell-role="th">Brier score</th>
+<th data-quarto-table-cell-role="th">Brier Skill Score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Uncalibrated</td>
+<td>0.001332</td>
+<td>-0.000650</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Platt scaling</td>
+<td>0.001331</td>
+<td>0.000286</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Isotonic</td>
+<td>0.001331</td>
+<td>0.000217</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Post‑hoc calibration improves probability scaling relative to the uncalibrated model, reducing overall Brier score. We can see here that both Platt scaling and Isotonic calibration improved our Brier Skill score into a slight positive result, from negative originally. This confirms our suspicion that our model probabilities were suffering from a calibration issue. Let’s redraw our calibration curve and see the difference.</p>
+<hr>
+</section>
+<section id="calibration-curves-before-and-after-calibration" class="level2">
+<h2 class="anchored" data-anchor-id="calibration-curves-before-and-after-calibration">Calibration Curves: Before and After Calibration</h2>
+<p>To visualise the effect of post‑hoc calibration, we compare calibration curves for the uncalibrated model and the calibrated variants. Given the rarity of the event, the plot focuses on the probability range where most predictions lie.</p>
+<div id="f73e7a02" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.calibration <span class="im">import</span> calibration_curve</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute calibration curves</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>prob_true_uncal, prob_pred_uncal <span class="op">=</span> calibration_curve(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    y_test, y_pred_proba, n_bins<span class="op">=</span><span class="dv">5</span>, strategy<span class="op">=</span><span class="st">"quantile"</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>prob_true_platt, prob_pred_platt <span class="op">=</span> calibration_curve(</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    y_test, y_platt, n_bins<span class="op">=</span><span class="dv">5</span>, strategy<span class="op">=</span><span class="st">"quantile"</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>prob_true_iso, prob_pred_iso <span class="op">=</span> calibration_curve(</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    y_test, y_isotonic, n_bins<span class="op">=</span><span class="dv">5</span>, strategy<span class="op">=</span><span class="st">"quantile"</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>plt.plot(prob_pred_uncal, prob_true_uncal, marker<span class="op">=</span><span class="st">"o"</span>, label<span class="op">=</span><span class="st">"Uncalibrated"</span>)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>plt.plot(prob_pred_platt, prob_true_platt, marker<span class="op">=</span><span class="st">"o"</span>, label<span class="op">=</span><span class="st">"Platt scaling"</span>)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>plt.plot(prob_pred_iso, prob_true_iso, marker<span class="op">=</span><span class="st">"o"</span>, label<span class="op">=</span><span class="st">"Isotonic"</span>)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Perfect calibration reference</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="fl">0.005</span>], [<span class="dv">0</span>, <span class="fl">0.005</span>], linestyle<span class="op">=</span><span class="st">"--"</span>, color<span class="op">=</span><span class="st">"black"</span>, label<span class="op">=</span><span class="st">"Perfect calibration"</span>)</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Zoomed axes for rare-event setting</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="dv">0</span>, <span class="fl">0.005</span>)</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="dv">0</span>, <span class="fl">0.005</span>)</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Predicted probability"</span>)</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Observed frequency"</span>)</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Calibration Curves (Zoomed: 0–0.5%)"</span>)</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="pricing-risk_files/figure-html/cell-13-output-1.png" width="625" height="597" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Post‑hoc calibration improves the alignment between predicted probabilities and observed event frequencies. Platt scaling provides a smooth adjustment that improves probability reliability, while isotonic calibration offers greater flexibility at the cost of increased variance in sparse regions. In rare‑event settings, these trade‑offs must be balanced thoughtfully.</p>
+</section>
+<section id="todo---gradient-boosting" class="level2">
+<h2 class="anchored" data-anchor-id="todo---gradient-boosting">Todo - Gradient Boosting</h2>
+
+
 </section>
 
 </main> <!-- /main -->

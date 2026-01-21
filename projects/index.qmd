@@ -2,7 +2,7 @@
 title: "Projects"
 ---
 
-Below is a selection of self‑contained, IP‑safe demonstration projects showcasing my approach to data science, modelling, and decision‑making in production‑style contexts.
+Below is a selection of self‑contained, IP‑safe demonstration projects showcasing my approach to data science, modelling, and decision‑making in a production‑style context.
 
 - [Designing a Predictive Risk Model for High‑Value Assets](pricing-risk.qmd)
 

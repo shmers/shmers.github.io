@@ -1,0 +1,22 @@
+---
+title: "Motor Pricing FCA Remediation"
+format: html
+---
+
+## Download the full remediation plan
+
+The full FCA remediation plan, including delivery timeline, governance approach,
+and model validation evidence, is available as a downloadable PDF.
+
+➡️ **[Download the Motor Pricing FCA Remediation Plan (PDF)](fca-motor-pricing.pdf)**
+
+---
+
+### Document details
+
+- **Audience:** Senior Management, Risk Committee, FCA
+- **Version:** v1.0
+- **Last updated:** 2026-01-15
+- **Status:** Final
+
+> This document is an example presentation to senior management in response to a hypothetical FCA review scenario.

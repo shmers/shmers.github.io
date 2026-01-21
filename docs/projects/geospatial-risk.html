@@ -229,7 +229,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="synthetic-spatial-data" class="level2">
 <h2 class="anchored" data-anchor-id="synthetic-spatial-data">Synthetic Spatial Data</h2>
-<div id="e8ca5eb0" class="cell" data-execution_count="1">
+<div id="6663fa92" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -295,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="create-spatial-clusters-of-higher-risk" class="level2">
 <h2 class="anchored" data-anchor-id="create-spatial-clusters-of-higher-risk">Create spatial clusters of higher risk</h2>
-<div id="f950d667" class="cell" data-execution_count="2">
+<div id="caa53ff7" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>risk_centers <span class="op">=</span> [</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">51.5</span>, <span class="op">-</span><span class="fl">0.1</span>),   <span class="co"># London</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">53.5</span>, <span class="op">-</span><span class="fl">2.3</span>),   <span class="co"># Manchester</span></span>
@@ -368,7 +368,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="event-generation" class="level2">
 <h2 class="anchored" data-anchor-id="event-generation">Event Generation</h2>
-<div id="a38e6920" class="cell" data-execution_count="3">
+<div id="c9f53f62" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>logit <span class="op">=</span> <span class="op">-</span><span class="fl">4.0</span> <span class="op">+</span> <span class="fl">2.0</span> <span class="op">*</span> df[<span class="st">"spatial_risk"</span>]</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>prob <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(<span class="op">-</span>logit))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -384,7 +384,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="spatial-binning" class="level2">
 <h2 class="anchored" data-anchor-id="spatial-binning">Spatial Binning</h2>
 <p>To incorporate spatial context in a robust and privacy‑preserving way, we discretise latitude and longitude into coarse spatial bins. This reduces sensitivity to exact coordinates while enabling aggregation of local risk signals.</p>
-<div id="5fd5d5f3" class="cell" data-execution_count="4">
+<div id="c884e897" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define bin sizes (degrees)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>lat_bin_size <span class="op">=</span> <span class="fl">0.25</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>lon_bin_size <span class="op">=</span> <span class="fl">0.25</span></span>
@@ -451,7 +451,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="spatial-aggregation" class="level2">
 <h2 class="anchored" data-anchor-id="spatial-aggregation">Spatial Aggregation</h2>
 <p>Within each spatial cell, we compute aggregated statistics that summarise local event behaviour. These aggregates form the basis of geospatial risk features.</p>
-<div id="a42b1521" class="cell" data-execution_count="5">
+<div id="624b5dcf" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cell_stats <span class="op">=</span> (</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">"spatial_cell"</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      .agg(</span>
@@ -526,7 +526,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Raw cell event rates can be <strong>noisy</strong> when exposure is low.<br>
 We’ll apply <strong>empirical Bayes–style smoothing</strong>.</p>
 <p>To reduce variance in low‑exposure cells, we apply simple Bayesian smoothing by shrinking cell‑level event rates toward the global mean.</p>
-<div id="e20f31af" class="cell" data-execution_count="6">
+<div id="79b21850" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Global event rate</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>global_rate <span class="op">=</span> df[<span class="st">"event"</span>].mean()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -606,7 +606,7 @@ We’ll apply <strong>empirical Bayes–style smoothing</strong>.</p>
 <section id="constructing-geospatial-features" class="level2">
 <h2 class="anchored" data-anchor-id="constructing-geospatial-features">Constructing Geospatial Features</h2>
 <p>We attach the aggregated spatial features back to the individual‑level dataset for use in downstream modelling.</p>
-<div id="9f0124bc" class="cell" data-execution_count="7">
+<div id="8f5952ed" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.merge(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    cell_stats[[<span class="st">"spatial_cell"</span>, <span class="st">"smoothed_event_rate"</span>]],</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">"spatial_cell"</span>,</span>
@@ -665,7 +665,7 @@ We’ll apply <strong>empirical Bayes–style smoothing</strong>.</p>
 </div>
 </div>
 <hr>
-<div id="47accc18" class="cell" data-execution_count="8">
+<div id="ba829fe0" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> Point</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -682,7 +682,7 @@ We’ll apply <strong>empirical Bayes–style smoothing</strong>.</p>
 <section id="visualising-raw-spatial-events" class="level2">
 <h2 class="anchored" data-anchor-id="visualising-raw-spatial-events">Visualising Raw Spatial Events</h2>
 <p>We begin by visualising the spatial distribution of events to understand broad geographic patterns and clustering behaviour.</p>
-<div id="9d1e31d8" class="cell" data-execution_count="9">
+<div id="1c3b9c54" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
@@ -714,7 +714,7 @@ We’ll apply <strong>empirical Bayes–style smoothing</strong>.</p>
 <section id="visualising-smoothed-spatial-risk" class="level2">
 <h2 class="anchored" data-anchor-id="visualising-smoothed-spatial-risk">Visualising Smoothed Spatial Risk</h2>
 <p>Aggregated and smoothed spatial features provide a clearer view of underlying geographic risk patterns.</p>
-<div id="a4e4219d" class="cell" data-execution_count="10">
+<div id="3664229e" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use cell-level centroids for plotting</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>cell_stats[<span class="st">"lat_center"</span>] <span class="op">=</span> (</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    cell_stats[<span class="st">"spatial_cell"</span>]</span>
@@ -761,7 +761,7 @@ We’ll apply <strong>empirical Bayes–style smoothing</strong>.</p>
 <h2 class="anchored" data-anchor-id="thiessen-voronoi-polygons-for-spatial-risk">Thiessen (Voronoi) Polygons for Spatial Risk</h2>
 <p>To further visualise spatial structure, we construct Thiessen (Voronoi) polygons based on spatial cell centroids. Each polygon represents the region of space closest to a given cell, providing a continuous spatial partition coloured by smoothed risk.</p>
 <p>For the curious, click here to learn more about <a href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi polygons</a></p>
-<div id="be9598de" class="cell" data-execution_count="11">
+<div id="7b04726a" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.spatial <span class="im">import</span> Voronoi</span>
@@ -828,7 +828,7 @@ We’ll apply <strong>empirical Bayes–style smoothing</strong>.</p>
 <h2 class="anchored" data-anchor-id="mapping-spatial-risk-using-the-british-national-grid">Mapping Spatial Risk Using the British National Grid</h2>
 <p>To visualise spatial risk in a cartographically appropriate coordinate system, we project locations onto the British National Grid (BNG). This projection is commonly used for mapping and spatial analysis within Great Britain, providing distance‑preserving coordinates in metres.</p>
 <p>Northern Ireland uses a separate national grid and is therefore excluded from this visualisation for technical correctness.</p>
-<div id="f4eb0f1e" class="cell" data-execution_count="12">
+<div id="a215e7ea" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> Point</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -905,7 +905,7 @@ We’ll apply <strong>empirical Bayes–style smoothing</strong>.</p>
 </div>
 </div>
 <hr>
-<div id="a9a26688" class="cell" data-execution_count="13">
+<div id="27eb567d" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert point data to GeoDataFrame</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>geometry <span class="op">=</span> [</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    Point(lon, lat)</span>
@@ -984,12 +984,12 @@ We’ll apply <strong>empirical Bayes–style smoothing</strong>.</p>
 </section>
 <section id="keep-only-great-britain-approximate-longitude-filter" class="level2">
 <h2 class="anchored" data-anchor-id="keep-only-great-britain-approximate-longitude-filter">Keep only Great Britain (approximate longitude filter)</h2>
-<div id="38344545" class="cell" data-execution_count="14">
+<div id="e56299c5" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>uk_gb <span class="op">=</span> uk[uk.geometry.centroid.x <span class="op">&gt;</span> <span class="op">-</span><span class="dv">8</span>]</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>uk_gb_bng <span class="op">=</span> uk_gb.to_crs(epsg<span class="op">=</span><span class="dv">27700</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\morri\AppData\Local\Temp\ipykernel_23992\2014797042.py:1: UserWarning:
+<pre><code>C:\Users\morri\AppData\Local\Temp\ipykernel_25220\2014797042.py:1: UserWarning:
 
 Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
 
@@ -997,7 +997,7 @@ Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. U
 </div>
 </div>
 <hr>
-<div id="538f4cc1" class="cell" data-execution_count="15">
+<div id="b1a83b5d" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> Point</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1097,7 +1097,7 @@ Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. U
 </div>
 </div>
 <hr>
-<div id="632fd98e" class="cell" data-execution_count="16">
+<div id="dcca1be1" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">10</span>))</span>
@@ -1143,7 +1143,7 @@ Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. U
 <section id="wip---visualisation" class="level2">
 <h2 class="anchored" data-anchor-id="wip---visualisation">WIP - Visualisation</h2>
 <hr>
-<div id="f9f627cc" class="cell" data-execution_count="17">
+<div id="37726470" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>lsoa <span class="op">=</span> gpd.read_file(<span class="vs">r"C:</span><span class="er">\</span><span class="vs">Users</span><span class="dv">\m</span><span class="vs">orri</span><span class="er">\</span><span class="vs">PycharmProjects</span><span class="dv">\s</span><span class="vs">hmers</span><span class="dv">.</span><span class="vs">github</span><span class="dv">.</span><span class="vs">io</span><span class="er">\</span><span class="vs">geodata</span><span class="er">\</span><span class="vs">Lower_layer_Super_Output_Areas_December_2021_Boundaries_EW_BGC_V5_-6970154227154374572</span><span class="dv">.</span><span class="vs">gpkg"</span>)</span>
@@ -1239,7 +1239,7 @@ Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. U
 </section>
 <section id="reproject-to-bng" class="level2">
 <h2 class="anchored" data-anchor-id="reproject-to-bng">Reproject to BNG</h2>
-<div id="cd24bee9" class="cell" data-execution_count="18">
+<div id="50658771" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>lsoa_bng <span class="op">=</span> lsoa.to_crs(epsg<span class="op">=</span><span class="dv">27700</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>lsoa_bng.crs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1266,7 +1266,7 @@ Datum: Ordnance Survey of Great Britain 1936
 </section>
 <section id="load-population-csv" class="level2">
 <h2 class="anchored" data-anchor-id="load-population-csv">Load population CSV</h2>
-<div id="77a45d59" class="cell" data-execution_count="19">
+<div id="686e8fac" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pop <span class="op">=</span> pd.read_csv(<span class="vs">r"C:</span><span class="er">\</span><span class="vs">Users</span><span class="dv">\m</span><span class="vs">orri</span><span class="er">\</span><span class="vs">PycharmProjects</span><span class="dv">\s</span><span class="vs">hmers</span><span class="dv">.</span><span class="vs">github</span><span class="dv">.</span><span class="vs">io</span><span class="er">\</span><span class="vs">geodata</span><span class="dv">\M</span><span class="vs">id 2022 LSOA 2021</span><span class="dv">.</span><span class="vs">csv"</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pop.columns.tolist())</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1400,7 +1400,7 @@ Datum: Ordnance Survey of Great Britain 1936
 </section>
 <section id="extract-relevant-columns" class="level2">
 <h2 class="anchored" data-anchor-id="extract-relevant-columns">Extract relevant columns</h2>
-<div id="0895634d" class="cell" data-execution_count="20">
+<div id="08e421bc" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>pop <span class="op">=</span> pop.rename(columns<span class="op">=</span>{</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"LSOA 2021 Code"</span>: <span class="st">"LSOA21CD"</span>,</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Total"</span>: <span class="st">"population"</span></span>
@@ -1453,7 +1453,7 @@ Datum: Ordnance Survey of Great Britain 1936
 </div>
 </div>
 </div>
-<div id="dd41e5e4" class="cell" data-execution_count="21">
+<div id="9ee1a920" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>pop[<span class="st">"population"</span>] <span class="op">=</span> (</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    pop[<span class="st">"population"</span>]</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">str</span>.replace(<span class="st">","</span>, <span class="st">""</span>, regex<span class="op">=</span><span class="va">False</span>)</span>
@@ -1467,7 +1467,7 @@ population     int64
 dtype: object</code></pre>
 </div>
 </div>
-<div id="f575f5c1" class="cell" data-execution_count="22">
+<div id="e04e2031" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>lsoa <span class="op">=</span> lsoa.merge(</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    pop,</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">"LSOA21CD"</span>,</span>
@@ -1483,7 +1483,7 @@ dtype: object</code></pre>
 </section>
 <section id="project-compute-population-density" class="level2">
 <h2 class="anchored" data-anchor-id="project-compute-population-density">## Project &amp; Compute Population Density</h2>
-<div id="b62af677" class="cell" data-execution_count="23">
+<div id="3313966a" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>lsoa_bng <span class="op">=</span> lsoa.to_crs(epsg<span class="op">=</span><span class="dv">27700</span>)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>lsoa_bng[<span class="st">"area_km2"</span>] <span class="op">=</span> lsoa_bng.geometry.area <span class="op">/</span> <span class="fl">1e6</span></span>
@@ -1491,7 +1491,7 @@ dtype: object</code></pre>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    lsoa_bng[<span class="st">"population"</span>] <span class="op">/</span> lsoa_bng[<span class="st">"area_km2"</span>]</span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="4ed510dd" class="cell" data-execution_count="24">
+<div id="d3672f6b" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">11</span>))</span>

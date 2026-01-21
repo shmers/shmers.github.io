@@ -7,3 +7,5 @@ Below is a selection of self‑contained, IP‑safe demonstration projects showc
 - [Designing a Predictive Risk Model for High‑Value Assets](pricing-risk.qmd)
 
 - [Geospatial Enhancements to Risk Modelling](geospatial-risk.qmd)
+
+- [FCA Review Decision Response Plan & Commercial Mitigation Presentation (Hypothetical Scenario)](fca-motor-pricing.qmd)

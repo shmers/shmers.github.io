@@ -5,8 +5,7 @@ format: html
 
 ## Download the full remediation plan
 
-The full FCA remediation plan, including delivery timeline, governance approach,
-and model validation evidence, is available as a downloadable PDF.
+The full FCA remediation plan, including delivery timeline and governance approach, is available as a downloadable PDF.
 
 ➡️ **[Download the Motor Pricing FCA Remediation Plan (PDF)](fca-motor-pricing.pdf)**
 
